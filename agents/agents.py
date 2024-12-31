@@ -18,6 +18,7 @@ from prompts.prompts import (
 from utils.helper_functions import get_current_utc_datetime, check_for_content
 from states.state import AgentGraphState
 
+
 class Agent:
     def __init__(self, state: AgentGraphState, model=None, server=None, temperature=0, model_endpoint=None, stop=None, guided_json=None):
         self.state = state
@@ -32,10 +33,18 @@ class Agent:
         if self.server == 'openai':
             return get_open_ai_json(model=self.model, temperature=self.temperature) if json_model else get_open_ai(model=self.model, temperature=self.temperature)
         if self.server == 'ollama':
-            return OllamaJSONModel(model=self.model, temperature=self.temperature) if json_model else OllamaModel(model=self.model, temperature=self.temperature)
+            return OllamaJSONModel(
+                model=self.model,
+                temperature=self.temperature,
+                model_endpoint="http://localhost:11434/api/generate"
+            ) if json_model else OllamaModel(
+                model=self.model,
+                temperature=self.temperature,
+                model_endpoint="http://localhost:11434/api/generate"
+            )
         if self.server == 'vllm':
             return VllmJSONModel(
-                model=self.model, 
+                model=self.model,
                 guided_json=self.guided_json,
                 stop=self.stop,
                 model_endpoint=self.model_endpoint,
@@ -69,10 +78,11 @@ class Agent:
             ) if json_model else GeminiModel(
                 model=self.model,
                 temperature=self.temperature
-            )      
+            )
 
     def update_state(self, key, value):
         self.state = {**self.state, key: value}
+
 
 class PlannerAgent(Agent):
     def invoke(self, research_question, prompt=planner_prompt_template, feedback=None):
@@ -96,6 +106,7 @@ class PlannerAgent(Agent):
         self.update_state("planner_response", response)
         print(colored(f"Planner 👩🏿‍💻: {response}", 'cyan'))
         return self.state
+
 
 class SelectorAgent(Agent):
     def invoke(self, research_question, prompt=selector_prompt_template, feedback=None, previous_selections=None, serp=None):
@@ -125,6 +136,7 @@ class SelectorAgent(Agent):
         self.update_state("selector_response", response)
         return self.state
 
+
 class ReporterAgent(Agent):
     def invoke(self, research_question, prompt=reporter_prompt_template, feedback=None, previous_reports=None, research=None):
         feedback_value = feedback() if callable(feedback) else feedback
@@ -134,7 +146,7 @@ class ReporterAgent(Agent):
         feedback_value = check_for_content(feedback_value)
         previous_reports_value = check_for_content(previous_reports_value)
         research_value = check_for_content(research_value)
-        
+
         reporter_prompt = prompt.format(
             feedback=feedback_value,
             previous_reports=previous_reports_value,
@@ -155,6 +167,7 @@ class ReporterAgent(Agent):
         self.update_state("reporter_response", response)
         return self.state
 
+
 class ReviewerAgent(Agent):
     def invoke(self, research_question, prompt=reviewer_prompt_template, reporter=None, feedback=None):
         reporter_value = reporter() if callable(reporter) else reporter
@@ -162,7 +175,7 @@ class ReviewerAgent(Agent):
 
         reporter_value = check_for_content(reporter_value)
         feedback_value = check_for_content(feedback_value)
-        
+
         reviewer_prompt = prompt.format(
             reporter=reporter_value,
             state=self.state,
@@ -182,7 +195,8 @@ class ReviewerAgent(Agent):
         print(colored(f"Reviewer 👩🏽‍⚖️: {response}", 'magenta'))
         self.update_state("reviewer_response", response)
         return self.state
-    
+
+
 class RouterAgent(Agent):
     def invoke(self, feedback=None, research_question=None, prompt=router_prompt_template):
         feedback_value = feedback() if callable(feedback) else feedback
@@ -203,6 +217,7 @@ class RouterAgent(Agent):
         self.update_state("router_response", response)
         return self.state
 
+
 class FinalReportAgent(Agent):
     def invoke(self, final_response=None):
         final_response_value = final_response() if callable(final_response) else final_response
@@ -211,6 +226,7 @@ class FinalReportAgent(Agent):
         print(colored(f"Final Report 📝: {response}", 'blue'))
         self.update_state("final_reports", response)
         return self.state
+
 
 class EndNodeAgent(Agent):
     def invoke(self):
