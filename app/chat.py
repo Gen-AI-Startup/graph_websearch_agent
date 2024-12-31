@@ -7,6 +7,7 @@ from agent_graph.graph import create_graph, compile_workflow
 
 
 def update_config(serper_api_key, openai_llm_api_key, groq_llm_api_key, claud_llm_api_key, gemini_llm_api_key):
+    # TODO: Create the config file with the API keys and modify the path.abs
     config_path = "G:/My Drive/Data-Centric Solutions/07. Digital Content/LangGraph/code/graph_websearch_agent/config/config.yaml"
 
     with open(config_path, 'r') as file:
@@ -34,15 +35,17 @@ def update_config(serper_api_key, openai_llm_api_key, groq_llm_api_key, claud_ll
 
     print("Configuration updated successfully.")
 
+
 class ChatWorkflow:
     def __init__(self):
         self.workflow = None
         self.recursion_limit = 40
 
-    def build_workflow(self, server, model, model_endpoint, temperature, recursion_limit=40, stop=None):
+    # TODO: I'm testing with the stop value of 40, but the original was None
+    def build_workflow(self, server, model, model_endpoint, temperature, recursion_limit=40, stop=40):
         graph = create_graph(
-            server=server, 
-            model=model, 
+            server=server,
+            model=model,
             model_endpoint=model_endpoint,
             temperature=temperature,
             stop=stop
@@ -53,7 +56,7 @@ class ChatWorkflow:
     def invoke_workflow(self, message):
         if not self.workflow:
             return "Workflow has not been built yet. Please update settings first."
-        
+
         dict_inputs = {"research_question": message.content}
         limit = {"recursion_limit": self.recursion_limit}
         reporter_state = None
@@ -82,8 +85,10 @@ class ChatWorkflow:
 
         return "Workflow did not reach final report"
 
+
 # Use a single instance of ChatWorkflow
 chat_workflow = ChatWorkflow()
+
 
 @cl.on_chat_start
 async def start():
@@ -112,7 +117,7 @@ async def start():
                 label="Enter your SERPER API Key:",
                 description="You can get your API key from https://serper.dev/",
                 # initial="NO_KEY_GIVEN"
-                
+
             ),
             TextInput(
                 id='openai_llm_api_key',
@@ -163,6 +168,7 @@ async def start():
         ]
     ).send()
 
+
 @cl.on_settings_update
 async def update_settings(settings):
     global author
@@ -172,12 +178,12 @@ async def update_settings(settings):
     CLAUD_API_KEY = settings["claud_llm_api_key"]
     GEMINI_API_KEY = settings["gemini_llm_api_key"]
     update_config(
-        serper_api_key=SERPER_API_KEY, 
-        openai_llm_api_key=LLM_API_KEY, 
+        serper_api_key=SERPER_API_KEY,
+        openai_llm_api_key=LLM_API_KEY,
         groq_llm_api_key=GROQ_API_KEY,
         claud_llm_api_key=CLAUD_API_KEY,
         gemini_llm_api_key=GEMINI_API_KEY
-        )
+    )
     server = settings["server"]
     model = settings["llm_model"]
     model_endpoint = settings["server_endpoint"]
@@ -188,6 +194,7 @@ async def update_settings(settings):
     await cl.Message(content="✅ Settings updated successfully, building workflow...").send()
     chat_workflow.build_workflow(server, model, model_endpoint, temperature, recursion_limit, stop)
     await cl.Message(content="😊 Workflow built successfully.").send()
+
 
 @cl.on_message
 async def main(message: cl.Message):
