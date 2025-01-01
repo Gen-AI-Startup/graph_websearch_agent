@@ -8,7 +8,7 @@ def main():
     parser.add_argument("--server", help="Server to use")
     parser.add_argument("--model", help="Model to use")
     parser.add_argument("--model_endpoint", help="Model endpoint to use")
-    parser.add_argument("--iterations", type=int, default=100, help="Number of iterations")
+    parser.add_argument("--iterations", type=int, default=40, help="Number of iterations")
     parser.add_argument("--verbose", action="store_true", help="Enable verbose output")
     parser.add_argument("--config", help="Path to the configuration file")
     parser.add_argument("--temperature", type=float, help="Temperature to use")
@@ -21,14 +21,14 @@ def main():
         server = config["server"]
         model = config["model"]
         model_endpoint = config.get("model_endpoint", None)
-        iterations = config.get("iterations", 100)
+        iterations = config.get("iterations", 40)
         verbose = config.get("verbose", False)
         temperature = config.get("temperature", 0)
     else:
         server = args.server
         model = args.model
         model_endpoint = args.model_endpoint
-        iterations = args.iterations if args.iterations else 100
+        iterations = args.iterations if args.iterations else 40
         verbose = args.verbose
         temperature = args.temperature if args.temperature else 0
 
@@ -49,10 +49,10 @@ def main():
         limit = {"recursion_limit": iterations}
 
         for event in workflow.stream(dict_inputs, limit):
-            if verbose:
-                print("\nState Dictionary:", event)
-            else:
-                print("\n")
+                if verbose:
+                    print("\nState Dictionary:", event)
+                else:
+                    print("\n")
 
 
 if __name__ == "__main__":
