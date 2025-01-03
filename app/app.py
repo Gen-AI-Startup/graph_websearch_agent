@@ -49,10 +49,10 @@ def main():
         limit = {"recursion_limit": iterations}
 
         for event in workflow.stream(dict_inputs, limit):
-                if verbose:
-                    print("\nState Dictionary:", event)
-                else:
-                    print("\n")
+            if verbose:
+                print("\nState Dictionary:", event)
+            else:
+                print("\n")
 
 
 if __name__ == "__main__":
