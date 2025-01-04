@@ -17,7 +17,7 @@ class AgentGraphState(TypedDict):
 
 
 # Define the nodes in the agent graph
-def get_agent_graph_state(state:AgentGraphState, state_key: str):
+def get_agent_graph_state(state: AgentGraphState, state_key: str):
     if state_key == "planner_all":
         return state["planner_response"]
     elif state_key == "planner_latest":
