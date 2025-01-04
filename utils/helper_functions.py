@@ -8,11 +8,11 @@ from textwrap import wrap
 def load_config(file_path):
     # Define default values
     default_values = {
-        'SERPER_API_KEY': 'default_serper_api_key',
+        'SERPER_API_KEY': 'e3ebdd0e5be8528e5456f389c91b5ee184b613cb',
         'OPENAI_API_KEY': 'default_openai_api_key',
-        'SERPER_API_KEY': 'default_groq_api_key',
+        'GROQ_API_KEY': 'default_groq_api_key',
     }
-    
+
     with open(file_path, 'r') as file:
         config = yaml.safe_load(file)
         for key, value in config.items():
@@ -27,11 +27,13 @@ def load_config(file_path):
 #         for key, value in config.items():
 #             os.environ[key] = value
 
+
 # for getting the current date and time in UTC
 def get_current_utc_datetime():
     now_utc = datetime.now(timezone.utc)
     current_time_utc = now_utc.strftime("%Y-%m-%d %H:%M:%S %Z")
     return current_time_utc
+
 
 # for checking if an attribute of the state dict has content.
 def check_for_content(var):
@@ -39,10 +41,10 @@ def check_for_content(var):
         try:
             var = var.content
             return var.content
-        except:
+        except AttributeError:
             return var
     else:
-        var
+        return var
 
 
 # def custom_print(message, stdscr=None):

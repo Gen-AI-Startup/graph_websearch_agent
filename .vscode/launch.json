@@ -1,0 +1,21 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Python: App",
+            "type": "python",
+            "request": "launch",
+            "module": "app.app",
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal",
+            "args": [
+                "--server", "ollama",
+                "--model", "llama3:latest",
+                "--model_endpoint", "http://localhost:11434/api/generate",
+                "--iterations", "40",
+                "--temperature", "0",
+                "--verbose"
+            ],
+        }
+    ]
+}

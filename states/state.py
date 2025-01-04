@@ -1,6 +1,7 @@
 from typing import TypedDict, Annotated
 from langgraph.graph.message import add_messages
 
+
 # Define the state object for the agent graph
 class AgentGraphState(TypedDict):
     research_question: str
@@ -14,8 +15,9 @@ class AgentGraphState(TypedDict):
     final_reports: Annotated[list, add_messages]
     end_chain: Annotated[list, add_messages]
 
+
 # Define the nodes in the agent graph
-def get_agent_graph_state(state:AgentGraphState, state_key:str):
+def get_agent_graph_state(state: AgentGraphState, state_key: str):
     if state_key == "planner_all":
         return state["planner_response"]
     elif state_key == "planner_latest":
@@ -23,7 +25,7 @@ def get_agent_graph_state(state:AgentGraphState, state_key:str):
             return state["planner_response"][-1]
         else:
             return state["planner_response"]
-    
+
     elif state_key == "selector_all":
         return state["selector_response"]
     elif state_key == "selector_latest":
@@ -31,7 +33,7 @@ def get_agent_graph_state(state:AgentGraphState, state_key:str):
             return state["selector_response"][-1]
         else:
             return state["selector_response"]
-    
+
     elif state_key == "reporter_all":
         return state["reporter_response"]
     elif state_key == "reporter_latest":
@@ -39,7 +41,7 @@ def get_agent_graph_state(state:AgentGraphState, state_key:str):
             return state["reporter_response"][-1]
         else:
             return state["reporter_response"]
-    
+
     elif state_key == "reviewer_all":
         return state["reviewer_response"]
     elif state_key == "reviewer_latest":
@@ -47,7 +49,7 @@ def get_agent_graph_state(state:AgentGraphState, state_key:str):
             return state["reviewer_response"][-1]
         else:
             return state["reviewer_response"]
-        
+
     elif state_key == "serper_all":
         return state["serper_response"]
     elif state_key == "serper_latest":
@@ -55,7 +57,7 @@ def get_agent_graph_state(state:AgentGraphState, state_key:str):
             return state["serper_response"][-1]
         else:
             return state["serper_response"]
-    
+
     elif state_key == "scraper_all":
         return state["scraper_response"]
     elif state_key == "scraper_latest":
@@ -63,12 +65,13 @@ def get_agent_graph_state(state:AgentGraphState, state_key:str):
             return state["scraper_response"][-1]
         else:
             return state["scraper_response"]
-        
+
     else:
         return None
-    
+
+
 state = {
-    "research_question":"",
+    "research_question": "",
     "planner_response": [],
     "selector_response": [],
     "reporter_response": [],
