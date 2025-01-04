@@ -41,10 +41,10 @@ def check_for_content(var):
         try:
             var = var.content
             return var.content
-        except:
+        except AttributeError:
             return var
     else:
-        var
+        return var
 
 
 # def custom_print(message, stdscr=None):

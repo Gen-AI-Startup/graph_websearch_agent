@@ -18,7 +18,7 @@ def scrape_website(state: AgentGraphState, research=None):
 
     try:
         url = research_data["selected_page_url"]
-    except KeyError as e:
+    except KeyError:
         url = research_data["error"]
 
     try:
