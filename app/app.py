@@ -46,13 +46,26 @@ def main():
             break
 
         dict_inputs = {"research_question": query}
+        result = None
         limit = {"recursion_limit": iterations}
-
-        for event in workflow.stream(dict_inputs, limit):
-            if verbose:
-                print("\nState Dictionary:", event)
-            else:
-                print("\n")
+        count = 0
+        try:
+            for event in workflow.stream(dict_inputs, limit):
+                print(count)
+                count += 1
+                for key, value in event.items():
+                    print(f"Node: {key}")
+                    # print(f"Value: {value}")
+                    print("-------------------------------------------")
+                    result = value
+                if verbose:
+                    print("\nState Dictionary:", event)
+                else:
+                    print("\n")
+        except Exception:
+            result = None
+            print("Recursion limit reached. Exiting.")
+        return result
 
 
 if __name__ == "__main__":
